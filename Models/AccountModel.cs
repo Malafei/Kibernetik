@@ -26,5 +26,20 @@ namespace Kibernetik.Models
             public string confirmPassword { get; set; }
 
         }
+
+
+        public class LoginModel
+        {
+            [Required(ErrorMessage = "Required")]
+            [EmailAddress(ErrorMessage = "Required")]
+            public string email { get; set; }
+
+            [Required(ErrorMessage = "Required")]
+            [MinLength(6, ErrorMessage = "The password must contain at least 6 characters")]
+            [MaxLength(20, ErrorMessage = "The password must contain a maximum of 20 characters")]
+            [RegularExpression(@"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$",
+                ErrorMessage = "Incorrect password.")]
+            public string password { get; set; }
+        }
     }
 }

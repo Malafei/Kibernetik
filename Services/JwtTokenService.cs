@@ -9,82 +9,52 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using TokenApp;
 
 namespace Kibernetik.Services
 {
+
     public interface IJwtTocenService
     {
         string CreateToken(User user);
     }
 
-    public interface IJwtSigningEncodingKey
-    {
-        string SigningAlgorithm { get; }
-
-        SecurityKey GetKey();
-    }
-
-    // Ключ для проверки подписи (публичный)
-    public interface IJwtSigningDecodingKey
-    {
-        SecurityKey GetKey();
-    }
-
     public class JwtTokenService : IJwtTocenService
     {
-
         private readonly IConfiguration _configuration;
-        private readonly UserManager<User> _userManager;
-
-        public JwtTokenService(IConfiguration configuration,
-            UserManager<User> userManager)
+        public JwtTokenService(IConfiguration configuration)
         {
             _configuration = configuration;
-            _userManager = userManager;
         }
 
         public string CreateToken(User user)
         {
-            var claims = new Claim[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, authRequest.Name)
-            };
+            var claim = GetClaim(user);
+            var now = DateTime.UtcNow;
+            // создаем JWT-токен
+            var jwt = new JwtSecurityToken(
+                    issuer: AuthOptions.ISSUER,
+                    audience: AuthOptions.AUDIENCE,
+                    notBefore: now,
+                    claims: claim.Claims,
+                    expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
+                    signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+            
 
-            // 3. Генерируем JWT.
-            var token = new JwtSecurityToken(
-                issuer: "DemoApp",
-                audience: "DemoAppClient",
-                claims: claims,
-                expires: DateTime.Now.AddMinutes(5),
-                signingCredentials: new SigningCredentials(
-                        signingEncodingKey.GetKey(),
-                        signingEncodingKey.SigningAlgorithm)
-            );
+            return new JwtSecurityTokenHandler().WriteToken(jwt);
+        }
 
-            string jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
-            return jwtToken;
+        private ClaimsIdentity GetClaim(User user)
+        {
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimsIdentity.DefaultNameClaimType, user.login)
 
-
-            //var roles = _userManager.GetRolesAsync(user).Result;
-            //List<Claim> claims = new List<Claim>()
-            //{
-            //    new Claim("name", user.login)
-            //};
-
-            //foreach (var role in roles)
-            //{
-            //    claims.Add(new Claim("roles", role));
-            //}
-
-            //var signinKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetValue<String>("JwtKey")));
-            //var signinCredentials = new SigningCredentials(signinKey, SecurityAlgorithms.HmacSha256);
-
-            //var jwt = new JwtSecurityToken(
-            //    signingCredentials: signinCredentials,
-            //    expires: DateTime.Now.AddMinutes(1),
-            //    claims: claims
-            //);
-            //return new JwtSecurityTokenHandler().WriteToken(jwt);
+                };
+                ClaimsIdentity claimsIdentity =
+                new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
+                    ClaimsIdentity.DefaultRoleClaimType);
+                return claimsIdentity;
         }
     }
 }
