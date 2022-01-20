@@ -1,4 +1,5 @@
-﻿using Kibernetik.Data.DataUser;
+﻿using Kibernetik.Data.DataNews;
+using Kibernetik.Data.DataUser;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -17,5 +18,6 @@ namespace Kibernetik.Data
         }
 
         public DbSet<User> users { get; set; }
+        public DbSet<News> news { get; set; }
     }
 }

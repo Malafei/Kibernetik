@@ -6,23 +6,21 @@ using System.Threading.Tasks;
 
 namespace Kibernetik.Models
 {
-    public class AccountModel
-    {
         public class RegisterModel
         {
-            [Required(ErrorMessage = "Required")]
-            [EmailAddress(ErrorMessage = "Required")]
+            [Required(ErrorMessage = "Вкажіть пошту")]
+            [EmailAddress(ErrorMessage = "Не коректно вказана пошта")]
             public string email { get; set; }
 
-            [Required(ErrorMessage = "Required")]
-            [MinLength(6, ErrorMessage = "The password must contain at least 6 characters")]
-            [MaxLength(20, ErrorMessage = "The password must contain a maximum of 20 characters")]
-            [RegularExpression(@"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$",
-                ErrorMessage = "Incorrect password.")]
+            [Required(ErrorMessage = "Вкажіть пароль.")]
+            [MinLength(8, ErrorMessage = "Пароль має містить мінімум 8 символів.")]
+            [MaxLength(20, ErrorMessage = "Пароль має містить максимум 20 символів.")]
+            [RegularExpression("^[A-Za-z0-9]+$",
+                ErrorMessage = "Пароль має містить латинські символи.")]
             public string password { get; set; }
 
-            [Required(ErrorMessage = "Required")]
-            [Compare("password", ErrorMessage = "Password and password confirmation must match")]
+            [Required(ErrorMessage = "Повторіть пароль")]
+            [Compare("password", ErrorMessage = "Пароль та повтор паролю повині співпадати.")]
             public string confirmPassword { get; set; }
 
         }
@@ -30,16 +28,15 @@ namespace Kibernetik.Models
 
         public class LoginModel
         {
-            [Required(ErrorMessage = "Required")]
-            [EmailAddress(ErrorMessage = "Required")]
+            [Required(ErrorMessage = "Вкажіть пошту")]
+            [EmailAddress(ErrorMessage = "Не коректно вказана пошта")]
             public string email { get; set; }
 
-            [Required(ErrorMessage = "Required")]
-            [MinLength(6, ErrorMessage = "The password must contain at least 6 characters")]
-            [MaxLength(20, ErrorMessage = "The password must contain a maximum of 20 characters")]
-            [RegularExpression(@"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$",
-                ErrorMessage = "Incorrect password.")]
+            [Required(ErrorMessage = "Вкажіть пароль.")]
+            [MinLength(8, ErrorMessage = "Пароль має містить мінімум 8 символів.")]
+            [MaxLength(20, ErrorMessage = "Пароль має містить максимум 20 символів.")]
+            [RegularExpression("^[A-Za-z0-9]+$",
+                ErrorMessage = "Пароль має містить латинські символи.")]
             public string password { get; set; }
         }
-    }
 }

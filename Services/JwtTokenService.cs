@@ -48,7 +48,7 @@ namespace Kibernetik.Services
         {
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimsIdentity.DefaultNameClaimType, user.login)
+                    new Claim("name", user.login)
 
                 };
                 ClaimsIdentity claimsIdentity =

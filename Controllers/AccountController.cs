@@ -1,6 +1,7 @@
 ﻿using Kibernetik.Data;
 using Kibernetik.Data.DataUser;
-using Kibernetik.Data.Identity;
+using Kibernetik.Helper;
+using Kibernetik.Models;
 using Kibernetik.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -11,7 +12,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using static Kibernetik.Models.AccountModel;
 
 namespace Kibernetik.Controllers
 {
@@ -36,15 +36,17 @@ namespace Kibernetik.Controllers
                  
                 User user = await _context.users.FirstOrDefaultAsync(u => u.email == model.email); // шукаєм чи є такій логін в базі
                 if (user != null) // якщо юзер не дорівнює налл це означає що в базі є такий користувач і наш емаіл не буде універсальний
+                {
+                    ModelState.AddModelError("email", "Користувач з таким емейлом вже зареєстрований");
                     return ValidationProblem();
-
+                }
                 string[] nameUser = model.email.Split(new char[] { '@' });
                 user = new User
                 {
                     email = model.email,
                     login = nameUser[0],
-                    password = model.password
                 };
+                user.password = EncryptionHelper.HashedPassword(model.password, user.email);
 
                 await _context.users.AddAsync(user);
                 await _context.SaveChangesAsync();
@@ -59,11 +61,10 @@ namespace Kibernetik.Controllers
         {
             if (ModelState.IsValid)
             {
-                //var user = await _userManager.FindByEmailAsync(model.email);
                 User user = await _context.users.FirstOrDefaultAsync(x => x.email == model.email);
                 if (user != null)
                 {
-                    if (user.password == model.password)
+                    if (user.password == EncryptionHelper.HashedPassword(model.password, user.email))
                     {
                         string token = _tokenService.CreateToken(user);
                         return Ok(
@@ -72,18 +73,18 @@ namespace Kibernetik.Controllers
                     }
                     else
                     {
-                        ModelState.AddModelError("password", "Such a password does not exist");
-                        return ValidationProblem();
+                        ModelState.AddModelError("password", "Невірний пароль");
+                        return ValidationProblem(ModelState);
                     }
                 }
                 else
                 {
-                    ModelState.AddModelError("email", "Email address does not exist");
-                    return ValidationProblem();
+                    ModelState.AddModelError("email", "Користувача з такою електроною адресою не знайдено");
+                    return ValidationProblem(ModelState);
                 }
             }
             else
-                return ValidationProblem();
+                return ValidationProblem(ModelState);
         }
 
     }
