@@ -129,6 +129,8 @@ namespace Kibernetik.Controllers
                     news.image = PhotoHelper.AddPhoto(model.image);
                 }
 
+
+
                 _context.news.Update(news);
                 await _context.SaveChangesAsync();
                 return Ok();

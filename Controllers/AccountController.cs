@@ -46,7 +46,7 @@ namespace Kibernetik.Controllers
                     email = model.email,
                     login = nameUser[0],
                 };
-                user.password = EncryptionHelper.HashedPassword(model.password, user.email);
+                user.password = EncryptionHelper.HashedPassword(model.password, model.email);
 
                 await _context.users.AddAsync(user);
                 await _context.SaveChangesAsync();

@@ -14,10 +14,7 @@ namespace Kibernetik.Helper
             if (password != null)
             {
                 byte[] salt = System.Text.Encoding.UTF8.GetBytes(email);
-                using (var rngCsp = new RNGCryptoServiceProvider())
-                {
-                    rngCsp.GetNonZeroBytes(salt);
-                }
+
                 string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                     password: password,
                     salt: salt,

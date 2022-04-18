@@ -1,4 +1,5 @@
 ﻿using Kibernetik.Data.DataNews;
+using Kibernetik.Data.DataShedule;
 using Kibernetik.Data.DataUser;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -19,5 +20,7 @@ namespace Kibernetik.Data
 
         public DbSet<User> users { get; set; }
         public DbSet<News> news { get; set; }
+        public DbSet<Lesson> lesson { get; set; }
+        public DbSet<Shedule> shedule { get; set; }
     }
 }
