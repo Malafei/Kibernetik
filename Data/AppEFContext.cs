@@ -18,9 +18,19 @@ namespace Kibernetik.Data
 
         }
 
+
+
         public DbSet<User> users { get; set; }
         public DbSet<News> news { get; set; }
         public DbSet<Lesson> lesson { get; set; }
         public DbSet<Shedule> shedule { get; set; }
+
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Lesson>()
+                .HasOne(p => p.shedule)
+                .WithMany(b => b.lessons);
+        }
     }
 }

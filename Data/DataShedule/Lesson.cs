@@ -14,7 +14,7 @@ namespace Kibernetik.Data.DataShedule
             public string name_lesson { get; set; }
 
             [Required, StringLength(255)]
-            public string teather { get; set; }
+            public string teacher { get; set; }
 
             [Required, StringLength(255)]
             public string type { get; set; }
@@ -25,6 +25,7 @@ namespace Kibernetik.Data.DataShedule
             [Required]
             public DateTime time { get; set; }
 
+            
             public Shedule shedule { get; set; }
 
         }

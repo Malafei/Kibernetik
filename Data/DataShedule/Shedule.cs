@@ -5,11 +5,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Kibernetik.Data.DataShedule
 {
+    [Table("tblShedules")]
     public class Shedule
     {
-        [Table("tblShedules")]
-        public class User
-        {
             [Key]
             public int id { get; set; }
 
@@ -19,14 +17,8 @@ namespace Kibernetik.Data.DataShedule
             public ICollection<Lesson> lessons { get; set; }
 
             public DateTime date { get; set; }
+            
 
 
-
-
-
-
-
-
-        }
     }
 }
