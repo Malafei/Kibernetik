@@ -1,6 +1,12 @@
 ﻿using Kibernetik.Data;
+using Kibernetik.Data.DataShedule;
+using Kibernetik.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Kibernetik.Controllers
 {
@@ -16,25 +22,91 @@ namespace Kibernetik.Controllers
         }
 
 
-        [HttpGet]
-        public IActionResult all()
+
+
+        [HttpPost("addShedules")]
+        public async Task<IActionResult> addShedule([FromForm] AddGroupModel model)
         {
-            //List<ItemNewsModel> news = new List<ItemNewsModel>();
-            //foreach (var item in _context.news)
-            //{
-            //    DateTime dateOnly = item.CreateDate.Date;
-            //    news.Add(new ItemNewsModel
-            //    {
-            //        id = item.id,
-            //        name = item.name,
-            //        description = item.description,
-            //        image = item.image,
-            //        date = dateOnly.ToString("dd.MM.yyyy")
-            //    });
-            //}
-            //news.Reverse();
-            //return Ok(news);
-            return Ok();
+            if (ModelState.IsValid)
+            {
+                Shedule shedule = new Shedule
+                {
+                    
+                };
+
+                
+
+                await _context.shedule.AddAsync(shedule);
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            else
+                return ValidationProblem();
+        }
+
+
+
+
+        [HttpPost("addGroupShedules")]
+        public async Task<IActionResult> addGroupShedules([FromForm] AddGroupModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                Shedule shedule = new Shedule
+                {
+                    name_group = model.nameGroup
+                };
+
+                await _context.shedule.AddAsync(shedule);
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            else
+                return ValidationProblem();
+        }
+
+
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> DeleteGroupShedule(int id)
+        {
+            try
+            {
+                var shedule = _context.shedule.SingleOrDefault(x => x.id == id);
+                if (shedule == null)
+                    return StatusCode(404);
+
+                if (shedule.lessons.Count > 0)
+                {
+                    foreach (var lesson in shedule.lessons)
+                    {
+                        _context.lesson.Remove(lesson);
+                    }
+                }
+
+
+                _context.shedule.Remove(shedule);
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { invalid = "Something went wrong on server " + ex.Message });
+            }
+        }
+
+        [HttpGet("showGroup")]
+        public IActionResult ShowGroup()
+        {
+            List<ShowGroupModel> groups = new List<ShowGroupModel>();
+            foreach (var item in _context.shedule)
+            {
+
+                groups.Add(new ShowGroupModel
+                {
+                    nameGroup = item.name_group
+                }) ;
+            }
+            return Ok(groups);
         }
     }
 }

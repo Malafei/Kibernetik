@@ -16,8 +16,6 @@ namespace Kibernetik.Data.DataShedule
 
             public ICollection<Lesson> lessons { get; set; }
 
-            public DateTime date { get; set; }
-            
 
 
     }
