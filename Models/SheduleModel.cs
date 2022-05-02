@@ -5,7 +5,8 @@ namespace Kibernetik.Models
 
     public class ShowGroupModel
     {
-        public string nameGroup { get; set; }
+        public string label { get; set; }
+        public int key { get; set; }
     }
     public class AddGroupModel
     {

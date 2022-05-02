@@ -100,11 +100,11 @@ namespace Kibernetik.Controllers
             List<ShowGroupModel> groups = new List<ShowGroupModel>();
             foreach (var item in _context.shedule)
             {
-
                 groups.Add(new ShowGroupModel
                 {
-                    nameGroup = item.name_group
-                }) ;
+                    label = item.name_group,
+                    key = item.id,
+                });
             }
             return Ok(groups);
         }
