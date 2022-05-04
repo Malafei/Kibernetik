@@ -26,9 +26,9 @@ namespace Kibernetik.Models
 
         [Required(ErrorMessage = "Поле обовязкове")]
         [MaxLength(100, ErrorMessage = "Максимальна довжина назви 100 символів")]
-        public string nameGroup { get; set; }
+        public string key { get; set; }
 
-        public List<Lesson> lesons { get; set; }
+        public List<ItemLessonsModel> lesons { get; set; }
 
         public DateTime date { get; set; }
 
@@ -43,6 +43,15 @@ namespace Kibernetik.Models
 
         [Required(ErrorMessage = "Поле обовязкове")]
         public int key { get; set; }
+    }
+
+    public class ItemLessonsModel
+    {
+        public DateTime time { get; set; }
+        public string nameLesson { get; set; }
+        public string nameTeacher { get; set; }
+        public string classRoom { get; set; }
+        public string typeLesson { get; set; }
     }
 
     public class EditSheduleModel

@@ -24,13 +24,12 @@ namespace Kibernetik.Controllers
 
 
 
-        [HttpPost("addShedules")]
+        [HttpPost("addShedule")]
         public async Task<IActionResult> addShedule([FromForm] AddSheduleModel model)
         {
             if (ModelState.IsValid)
             {
-
-                var shed = _context.shedule.SingleOrDefault(x => x.name_group == model.nameGroup);
+                var shed = _context.shedule.SingleOrDefault(x => x.id.ToString() == model.key);
                 if (shed == null)
                     return BadRequest(new { invalid = "Такої групи не існує" });
 
@@ -43,12 +42,13 @@ namespace Kibernetik.Controllers
                     foreach (var item in model.lesons)
                     {
                         await _context.lesson.AddAsync(new Lesson{ 
+
                             shedule = shed,
                             date = model.date,
-                            classroom = item.classroom,
-                            teacher = item.teacher,
-                            type = item.type,
-                            name_lesson = item.name_lesson,
+                            classroom = item.classRoom,
+                            teacher = item.nameTeacher,
+                            type = item.typeLesson,
+                            name_lesson = item.nameLesson,
                             time = item.time,
                         });
                         await _context.SaveChangesAsync();
