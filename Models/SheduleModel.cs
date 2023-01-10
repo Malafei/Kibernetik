@@ -24,25 +24,23 @@ namespace Kibernetik.Models
     public class AddSheduleModel
     {
 
-        [Required(ErrorMessage = "Поле обовязкове")]
-        [MaxLength(100, ErrorMessage = "Максимальна довжина назви 100 символів")]
-        public string key { get; set; }
-
-        public List<ItemLessonsModel> lesons { get; set; }
+        public List<ItemLessonsModel> lessons { get; set; }
 
         public DateTime date { get; set; }
+
+        [Required(ErrorMessage = "Поле обовязкове")]
+        public int nameGroup { get; set; }
 
     }
 
     public class EditGroupModel
     {
         [Required(ErrorMessage = "Поле обовязкове")]
-        [MaxLength(100, ErrorMessage = "Максимальна довжина назви 100 символів")]
-        public string New_nameGroup { get; set; }
-
+        public int nameGroup { get; set; }
 
         [Required(ErrorMessage = "Поле обовязкове")]
-        public int key { get; set; }
+        public string newnameGroup { get; set; }
+
     }
 
     public class ItemLessonsModel

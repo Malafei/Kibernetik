@@ -29,7 +29,8 @@ namespace Kibernetik.Controllers
         {
             if (ModelState.IsValid)
             {
-                var shed = _context.shedule.SingleOrDefault(x => x.id.ToString() == model.key);
+
+                Shedule shed = _context.shedule.SingleOrDefault(x => x.id == model.nameGroup);
                 if (shed == null)
                     return BadRequest(new { invalid = "Такої групи не існує" });
 
@@ -37,9 +38,9 @@ namespace Kibernetik.Controllers
                 if (lessons.Count() >= 1)
                     return BadRequest(new { invalid = "Розклад з такою датою вже додано для редагування перейдіть на відповідну сторінку" });
 
-                if (model.lesons.Count() >= 1)
+                if (model.lessons.Count() >= 1)
                 {
-                    foreach (var item in model.lesons)
+                    foreach (var item in model.lessons)
                     {
                         await _context.lesson.AddAsync(new Lesson{ 
 
@@ -118,11 +119,11 @@ namespace Kibernetik.Controllers
         {
             try
             {
-                var shedule = _context.shedule.SingleOrDefault(x => x.id == id);
+                Shedule shedule = _context.shedule.SingleOrDefault(x => x.id == id);
                 if (shedule == null)
                     return StatusCode(404);
 
-                if (shedule.lessons.Count > 0)
+                if (shedule.lessons != null && shedule.lessons.Count > 0)
                 {
                     foreach (var lesson in shedule.lessons)
                     {
@@ -130,7 +131,6 @@ namespace Kibernetik.Controllers
                         await _context.SaveChangesAsync();
                     }
                 }
-
 
                 _context.shedule.Remove(shedule);
                 await _context.SaveChangesAsync();
@@ -142,13 +142,13 @@ namespace Kibernetik.Controllers
             }
         }
 
-        [HttpPut("editGroupShedule")]
+        [HttpPost("editGroupShedule")]
         public async Task<IActionResult> EditGroupShedule([FromForm] EditGroupModel model)
         {
             if (ModelState.IsValid)
             {
-                Shedule shedule = _context.shedule.SingleOrDefault(x => x.id == model.key);
-                shedule.name_group = model.New_nameGroup;
+                Shedule shedule = _context.shedule.SingleOrDefault(x => x.id == model.nameGroup);
+                shedule.name_group = model.newnameGroup;
 
 
                 _context.shedule.Update(shedule);
