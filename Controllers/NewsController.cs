@@ -6,6 +6,7 @@ using Kibernetik.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NPOI.SS.Formula.Functions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,22 +26,22 @@ namespace Kibernetik.Controllers
             _context = context;
         }
 
-
         [HttpGet]
         public IActionResult all()
         {
+
             List<ItemNewsModel> news = new List<ItemNewsModel>();
             foreach (var item in _context.news)
             {
-                    DateTime dateOnly = item.CreateDate.Date;
-                    news.Add(new ItemNewsModel
-                    {
-                        id = item.id,
-                        name = item.name,
-                        description = item.description,
-                        image = item.image,
-                        date = dateOnly.ToString("dd.MM.yyyy")
-                    });
+                DateTime dateOnly = item.CreateDate.Date;
+                news.Add(new ItemNewsModel
+                {
+                    id = item.id,
+                    name = item.name,
+                    description = item.description,
+                    image = item.image,
+                    date = dateOnly.ToString("dd.MM.yyyy")
+                });
             }
             news.Reverse();
             return Ok(news);

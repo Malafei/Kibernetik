@@ -25,10 +25,8 @@ namespace Kibernetik.Controllers
 
 
         [HttpPost("addShedule")]
-        public async Task<IActionResult> addShedule([FromForm] AddSheduleModel model)
+        public async Task<IActionResult> addShedule([FromBody] AddSheduleModel model)
         {
-            if (ModelState.IsValid)
-            {
 
                 Shedule shed = _context.shedule.SingleOrDefault(x => x.id == model.nameGroup);
                 if (shed == null)
@@ -59,9 +57,6 @@ namespace Kibernetik.Controllers
                     return BadRequest(new { invalid = "Будь-ласка заповніть всі поля" });
 
                 return Ok();
-            }
-            else
-                return ValidationProblem();
         }
 
         [Route("edit/{id}")]

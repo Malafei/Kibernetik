@@ -28,7 +28,6 @@ namespace Kibernetik.Models
 
         public DateTime date { get; set; }
 
-        [Required(ErrorMessage = "Поле обовязкове")]
         public int nameGroup { get; set; }
 
     }
