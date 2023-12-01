@@ -8,13 +8,16 @@ namespace Kibernetik.Data.DataShedule
     [Table("tblShedules")]
     public class Shedule
     {
-            [Key]
-            public int id { get; set; }
+        [Key]
+        public int id { get; set; }
 
-            [Required, StringLength(255)]
-            public string name_group { get; set; }
+        [Required, StringLength(255)]
+        public Group name_group { get; set; }
 
-            public ICollection<Lesson> lessons { get; set; }
+        [Required]
+        public DateTime date { get; set; }
+
+        public ICollection<Lesson> lessons { get; set; }
 
 
 

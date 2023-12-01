@@ -24,6 +24,7 @@ namespace Kibernetik.Data
         public DbSet<News> news { get; set; }
         public DbSet<Lesson> lesson { get; set; }
         public DbSet<Shedule> shedule { get; set; }
+        public DbSet<Group> group { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

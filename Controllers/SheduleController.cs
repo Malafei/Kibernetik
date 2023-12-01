@@ -15,6 +15,7 @@ namespace Kibernetik.Controllers
     public class SheduleController : ControllerBase
     {
         private readonly AppEFContext _context;
+        private Shedule shed;
 
         public SheduleController(AppEFContext context)
         {
@@ -25,44 +26,144 @@ namespace Kibernetik.Controllers
 
 
         [HttpPost("addShedule")]
-        public async Task<IActionResult> addShedule([FromBody] AddSheduleModel model)
+        public IActionResult addShedule([FromForm] AddSheduleModel model)
         {
-
-                Shedule shed = _context.shedule.SingleOrDefault(x => x.id == model.nameGroup);
-                if (shed == null)
-                    return BadRequest(new { invalid = "Такої групи не існує" });
-
-                var lessons = _context.lesson.Where(x => x.shedule == shed && x.date == model.date);
-                if (lessons.Count() >= 1)
-                    return BadRequest(new { invalid = "Розклад з такою датою вже додано для редагування перейдіть на відповідну сторінку" });
-
-                if (model.lessons.Count() >= 1)
+            try
+            {
+                if (ModelState.IsValid)
                 {
-                    foreach (var item in model.lessons)
+                    if (_context.shedule.Count() > 0)
                     {
-                        await _context.lesson.AddAsync(new Lesson{ 
+                        var shedules = _context.shedule.SingleOrDefault(x => x.name_group.id == model.nameGroup && x.date == model.date);
+                        return BadRequest(new { invalid = "Розклад з такою датою вже додано для цієї групи якщо бажаєте редагувати перейдіть на відповідну сторінку" });
+                    }
+                    else
+                        return Ok();
+                }
+                else
+                    return BadRequest(new { invalid = "Ви ввели не коректні дані" });
+            }
+            catch (InvalidOperationException)
+            {
+                Group group = _context.group.SingleOrDefault(x => x.id == model.nameGroup);
+                shed = new Shedule
+                {
+                    date = model.date,
+                    name_group = group
+                };
+                return Ok();
+            }
 
-                            shedule = shed,
-                            date = model.date,
+
+            //var shed = _context.shedule.SingleOrDefault(x => x.id == model.nameGroup);
+
+            //if (group == null)
+            //return BadRequest(new { invalid = "Такої групи не існує" });
+
+
+            //var lessons = _context.lesson.Where(x => x.shedule == shed && x.date == model.date);
+            //if (lessons.Count() >= 1)
+            //return BadRequest(new { invalid = "Розклад з такою датою вже додано для цієї групи якщо бажаєте редагувати перейдіть на відповідну сторінку" });
+
+
+
+            //return Ok();
+
+            //    List<ItemLessonsModel> less = (List<ItemLessonsModel>)model.lessons;
+            //if (less.Count() >= 1)
+            //{
+            //    foreach (var item in less)
+            //    {
+            //        await _context.lesson.AddAsync(new Lesson
+            //        {
+
+            //            shedule = shed,
+            //            date = model.date,
+            //            classroom = item.classRoom,
+            //            teacher = item.nameTeacher,
+            //            type = item.typeLesson,
+            //            name_lesson = item.nameLesson,
+            //            time = item.time,
+            //        });
+            //        await _context.SaveChangesAsync();
+            //    }
+            //}
+            //    else
+            //        return BadRequest(new { invalid = "Будь-ласка заповніть всі поля" });
+
+        }
+
+        [HttpPost("addSheduleLessons")]
+        public async Task<IActionResult> addSheduleLessons([FromForm] AddSheduleLessonsModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                List<ItemLessonsModel> leson = (List<ItemLessonsModel>)model.lessons;
+
+                if (leson != null)
+                {
+                    if (leson.Count() >= 1)
+                    {
+                        shed.lessons = new List<Lesson>();
+                        foreach (var item in leson)
+                        {
+                            //if (item.time == )
+                            Lesson tmp = new Lesson
+                            {
+                                classroom = item.classRoom,
+                                teacher = item.nameTeacher,
+                                type = item.typeLesson,
+                                name_lesson = item.nameLesson,
+                                time = DateTime.Parse(item.time),
+                                shedule = shed
+                            };
+                            await _context.lesson.AddAsync(tmp);
+                            shed.lessons.Add(tmp);
+                            await _context.SaveChangesAsync();
+                        }
+                    }
+                }
+            }
+
+
+
+
+            /////////
+            List<ItemLessonsModel> less = (List<ItemLessonsModel>)model.lessons;
+
+
+            if (less != null)
+            {
+                if (less.Count() >= 1)
+                {
+                    foreach (var item in less)
+                    {
+                        await _context.lesson.AddAsync(new Lesson
+                        {
                             classroom = item.classRoom,
                             teacher = item.nameTeacher,
                             type = item.typeLesson,
                             name_lesson = item.nameLesson,
-                            time = item.time,
+                            //time = item.time,
                         });
                         await _context.SaveChangesAsync();
                     }
                 }
                 else
                     return BadRequest(new { invalid = "Будь-ласка заповніть всі поля" });
+            }
 
-                return Ok();
+
+            return Ok();
         }
+
+
 
         [Route("edit/{id}")]
         [HttpGet]
         public IActionResult EditShedule(int id)
         {
+            ///////// e pitanya
             var shedule = _context.shedule.SingleOrDefault(x => x.id == id);
             return Ok(shedule);
         }
@@ -74,6 +175,8 @@ namespace Kibernetik.Controllers
         {
             if (ModelState.IsValid)
             {
+                ///////// e pitanya
+
                 Shedule shedule = _context.shedule.SingleOrDefault(x => x.id == model.key);
                 if ((model.lesons == null || model.lesons.Count < 1) || (shedule.lessons == null || shedule.lessons.Count < 1))
                     return BadRequest(new { invalid = "Упс схоже щось пішло не так" });
@@ -95,12 +198,11 @@ namespace Kibernetik.Controllers
         {
             if (ModelState.IsValid)
             {
-                Shedule shedule = new Shedule
+                Group group = new Group
                 {
                     name_group = model.nameGroup
                 };
-
-                await _context.shedule.AddAsync(shedule);
+                await _context.group.AddAsync(group); 
                 await _context.SaveChangesAsync();
                 return Ok();
             }
@@ -114,20 +216,28 @@ namespace Kibernetik.Controllers
         {
             try
             {
-                Shedule shedule = _context.shedule.SingleOrDefault(x => x.id == id);
-                if (shedule == null)
-                    return StatusCode(404);
+                Group group = _context.group.SingleOrDefault(x => x.id == id);
+                //Shedule shedule = _context.shedule.SingleOrDefault(x => x.id == id);
+                //if (shedule == null)
+                //return StatusCode(404);
+                if (group == null)
+                    return BadRequest(new { invalid = "Ми не знайшли такої групи" });
 
-                if (shedule.lessons != null && shedule.lessons.Count > 0)
-                {
-                    foreach (var lesson in shedule.lessons)
-                    {
-                        _context.lesson.Remove(lesson);
-                        await _context.SaveChangesAsync();
-                    }
-                }
+                //if (shedule.lessons != null && shedule.lessons.Count > 0)
+                //{
+                //    foreach (var lesson in shedule.lessons)
+                //    {
+                //        _context.lesson.Remove(lesson);
+                //        await _context.SaveChangesAsync();
+                //    }
+                //}\
 
-                _context.shedule.Remove(shedule);
+
+
+                /////////////////////////////////////////////////pitanya
+
+
+                //_context.shedule.Remove(shedule);
                 await _context.SaveChangesAsync();
                 return Ok();
             }
@@ -142,11 +252,10 @@ namespace Kibernetik.Controllers
         {
             if (ModelState.IsValid)
             {
-                Shedule shedule = _context.shedule.SingleOrDefault(x => x.id == model.nameGroup);
-                shedule.name_group = model.newnameGroup;
+                Group group = _context.group.SingleOrDefault(x => x.id == model.nameGroup);
+                group.name_group = model.newnameGroup;
 
-
-                _context.shedule.Update(shedule);
+                _context.group.Update(group);
                 await _context.SaveChangesAsync();
                 return Ok();
             }
@@ -159,7 +268,7 @@ namespace Kibernetik.Controllers
         public IActionResult ShowGroup()
         {
             List<ShowGroupModel> groups = new List<ShowGroupModel>();
-            foreach (var item in _context.shedule)
+            foreach (var item in _context.group)
             {
                 groups.Add(new ShowGroupModel
                 {

@@ -25,10 +25,7 @@ namespace Kibernetik.Data.DataShedule
             [Required]
             public DateTime time { get; set; }
 
-
-        public DateTime date { get; set; }
-
-        public Shedule shedule { get; set; }
+            public Shedule shedule { get; set; }
 
         }
 }

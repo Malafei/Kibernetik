@@ -3,14 +3,16 @@ using System;
 using Kibernetik.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Kibernetik.Migrations
 {
     [DbContext(typeof(AppEFContext))]
-    partial class AppEFContextModelSnapshot : ModelSnapshot
+    [Migration("20230920141241_UpdateSheduleLessons")]
+    partial class UpdateSheduleLessons
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,22 +45,6 @@ namespace Kibernetik.Migrations
                     b.HasKey("id");
 
                     b.ToTable("tblNews");
-                });
-
-            modelBuilder.Entity("Kibernetik.Data.DataShedule.Group", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("name_group")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("id");
-
-                    b.ToTable("tblGroups");
                 });
 
             modelBuilder.Entity("Kibernetik.Data.DataShedule.Lesson", b =>
@@ -109,12 +95,12 @@ namespace Kibernetik.Migrations
                     b.Property<DateTime>("date")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("name_groupid")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("name_group")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
 
                     b.HasKey("id");
-
-                    b.HasIndex("name_groupid");
 
                     b.ToTable("tblShedules");
                 });
@@ -159,15 +145,6 @@ namespace Kibernetik.Migrations
                         .HasForeignKey("sheduleid");
 
                     b.Navigation("shedule");
-                });
-
-            modelBuilder.Entity("Kibernetik.Data.DataShedule.Shedule", b =>
-                {
-                    b.HasOne("Kibernetik.Data.DataShedule.Group", "name_group")
-                        .WithMany()
-                        .HasForeignKey("name_groupid");
-
-                    b.Navigation("name_group");
                 });
 
             modelBuilder.Entity("Kibernetik.Data.DataShedule.Shedule", b =>

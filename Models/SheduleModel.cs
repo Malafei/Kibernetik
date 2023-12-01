@@ -24,13 +24,20 @@ namespace Kibernetik.Models
     public class AddSheduleModel
     {
 
-        public List<ItemLessonsModel> lessons { get; set; }
-
         public DateTime date { get; set; }
 
         public int nameGroup { get; set; }
 
     }
+
+    public class AddSheduleLessonsModel
+    {
+
+        public object lessons { get; set; }
+
+
+    }
+    
 
     public class EditGroupModel
     {
@@ -44,7 +51,7 @@ namespace Kibernetik.Models
 
     public class ItemLessonsModel
     {
-        public DateTime time { get; set; }
+        public string time { get; set; }
         public string nameLesson { get; set; }
         public string nameTeacher { get; set; }
         public string classRoom { get; set; }
